@@ -2,12 +2,12 @@ import express from "express";
 import dbConfig from "./configurations/dbConfig.js";
 import "dotenv/config.js";
 import cors from "cors";
-import job from "./utils/cron.js";
 import { swaggerDocs, swaggerUi } from "./configurations/swaggerConfig.js";
 import { corsOptions } from "./static/constant.js";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
+import { startAllJobs } from "./utils/cron.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
-job.start();
+startAllJobs();
 
 const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => {
