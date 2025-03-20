@@ -8,6 +8,7 @@ import {
   removeKeysByPattern,
   resetCache,
   getAllKeys,
+  getMultiKeys,
 } from "../services/cacheService.js";
 import auth from "../middlewares/authentication.js";
 const router = express.Router();
@@ -20,5 +21,6 @@ router.get("/get-key-by-pattern/:pattern", auth(), getKeysByPattern);
 router.delete("/remove-key-by-pattern/:pattern", auth(), removeKeysByPattern);
 router.delete("/reset", auth(), resetCache);
 router.get("/get-all-keys", auth(), getAllKeys);
+router.get("/get-multi-key", auth(), getMultiKeys);
 
 export { router as cacheRouter };

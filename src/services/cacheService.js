@@ -78,9 +78,13 @@ const getKeysByPattern = async (req, res) => {
     const pattern = req.params.pattern;
     const regex = new RegExp("^" + pattern.replace("*", ".*") + "$");
 
-    const matchedKeys = Array.from(cache.entries())
-      .filter(([key]) => regex.test(key))
-      .map(([key, value]) => ({ key, ...value }));
+    const matchedKeys = [];
+    for (const key of cache.keys()) {
+      if (regex.test(key)) {
+        const value = cache.get(key);
+        matchedKeys.push({ key, ...value });
+      }
+    }
 
     if (matchedKeys.length === 0) {
       return makeSuccessResponse({
@@ -105,10 +109,12 @@ const removeKeysByPattern = async (req, res) => {
     const regex = new RegExp("^" + pattern.replace("*", ".*") + "$");
 
     const deletedKeys = [];
-    for (const key of cache.keys()) {
+    const keys = Array.from(cache.keys());
+    for (const key of keys) {
       if (regex.test(key)) {
-        deletedKeys.push({ key, ...cache.get(key) });
+        const value = cache.get(key);
         cache.delete(key);
+        deletedKeys.push({ key, ...value });
       }
     }
 
@@ -140,10 +146,10 @@ const resetCache = async (req, res) => {
 
 const getAllKeys = async (req, res) => {
   try {
-    const allKeys = Array.from(cache.entries()).map(([key, value]) => ({
-      key,
-      ...value,
-    }));
+    const allKeys = [];
+    for (const [key, value] of cache.entries()) {
+      allKeys.push({ key, ...value });
+    }
 
     if (allKeys.length === 0) {
       return makeSuccessResponse({
@@ -163,6 +169,43 @@ const getAllKeys = async (req, res) => {
   }
 };
 
+const getMultiKeys = async (req, res) => {
+  try {
+    const { keys } = req.body;
+
+    if (!keys || !Array.isArray(keys) || keys.length === 0) {
+      return makeErrorResponse({
+        res,
+        message: "Keys must be a non-empty array",
+      });
+    }
+
+    const foundKeys = [];
+    for (const key of keys) {
+      const value = cache.get(key);
+      if (value) {
+        foundKeys.push({ key, ...value });
+      }
+    }
+
+    if (foundKeys.length === 0) {
+      return makeSuccessResponse({
+        res,
+        message: "No matching keys found",
+        data: [],
+      });
+    }
+
+    return makeSuccessResponse({
+      res,
+      message: "Get keys by list success",
+      data: foundKeys,
+    });
+  } catch (error) {
+    return makeErrorResponse({ res, message: error.message });
+  }
+};
+
 export {
   putKey,
   getKey,
@@ -172,4 +215,5 @@ export {
   removeKeysByPattern,
   resetCache,
   getAllKeys,
+  getMultiKeys,
 };
