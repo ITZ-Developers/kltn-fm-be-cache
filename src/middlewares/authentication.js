@@ -1,48 +1,16 @@
-import jwt from "jsonwebtoken";
-import "dotenv/config.js";
 import { makeErrorResponse } from "../services/apiService.js";
+import { CACHE_API_KEY } from "../static/constant.js";
 
-const auth = (permissionCode) => {
+const auth = () => {
   return async (req, res, next) => {
-    const { authorization } = req.headers;
-    if (!authorization) {
-      return makeErrorResponse({ res, message: "You must be logged in" });
+    const apiKey = req.headers["x-api-key"];
+    if (!apiKey || CACHE_API_KEY !== apiKey) {
+      return makeErrorResponse({
+        res,
+        message: "Full authentication is required to access this resource",
+      });
     }
-    // const token = authorization.split(" ")[1];
-    try {
-      //   const { userId } = jwt.verify(token, process.env.JWT_SECRET);
-      //   const user = await User.findById(userId).populate({
-      //     path: "role",
-      //     populate: {
-      //       path: "permissions",
-      //     },
-      //   });
-      //   if (!user) {
-      //     return makeErrorResponse({ res, message: "User not found" });
-      //   }
-      //   if (user.status !== 1) {
-      //     return makeErrorResponse({
-      //       res,
-      //       message: "Tài khoản chưa được kích hoạt",
-      //     });
-      //   }
-      //   if (permissionCode) {
-      //     const hasPermission = user.role.permissions.some(
-      //       (perm) => perm.permissionCode === permissionCode
-      //     );
-      //     if (!hasPermission) {
-      //       return makeErrorResponse({
-      //         res,
-      //         message: "You don't have permission",
-      //       });
-      //     }
-      //   }
-      //   await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
-      //   req.user = user;
-      next();
-    } catch (error) {
-      return makeErrorResponse({ res, message: error.message });
-    }
+    next();
   };
 };
 

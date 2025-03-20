@@ -1,6 +1,6 @@
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-import "dotenv/config.js";
+import { SERVER_PORT } from "../static/constant.js";
 
 const swaggerOptions = {
   swaggerDefinition: {
@@ -20,7 +20,7 @@ const swaggerOptions = {
         description: "Remote server",
       },
       {
-        url: `http://localhost:${process.env.PORT}`,
+        url: `http://localhost:${SERVER_PORT}`,
         description: "Local server",
       },
     ],
