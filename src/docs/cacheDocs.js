@@ -319,7 +319,7 @@
 /**
  * @swagger
  * /v1/cache/get-multi-key:
- *   get:
+ *   post:
  *     summary: Retrieve multiple keys from the cache
  *     tags: [Cache]
  *     security:
