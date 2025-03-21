@@ -2,7 +2,7 @@ import CryptoJS from "crypto-js";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
-import { DATE_FORMAT } from "../static/constant";
+import { DATE_FORMAT } from "../static/constant.js";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
