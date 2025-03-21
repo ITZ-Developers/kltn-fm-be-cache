@@ -1,6 +1,7 @@
 import { LRUCache } from "lru-cache";
 import { CACHE_MAX_SIZE, CACHE_TTL } from "../static/constant.js";
 import { makeErrorResponse, makeSuccessResponse } from "./apiService.js";
+import { formatDateUTC } from "../utils/utils.js";
 
 const cache = new LRUCache({
   max: CACHE_MAX_SIZE,
@@ -62,11 +63,25 @@ const checkSession = async (req, res) => {
   try {
     const { key, session } = req.body;
     const value = cache.get(key);
-    const isValid = value ? value.session === session : false;
+
+    if (value && value.session === session) {
+      cache.set(
+        key,
+        { ...value, time: formatDateUTC() },
+        { noUpdateTTL: true }
+      );
+
+      return makeSuccessResponse({
+        res,
+        message: "Check session success",
+        data: { isValid: true },
+      });
+    }
+
     return makeSuccessResponse({
       res,
-      message: "Check session success",
-      data: { isValid },
+      message: "Check session failed",
+      data: { isValid: false },
     });
   } catch (error) {
     return makeErrorResponse({ res, message: error.message });
