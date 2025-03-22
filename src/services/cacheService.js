@@ -221,6 +221,60 @@ const getMultiKeys = async (req, res) => {
   }
 };
 
+const putPublicKey = async (req, res) => {
+  try {
+    const { key, publicKey } = req.body;
+
+    if (!key || !publicKey) {
+      return makeErrorResponse({
+        res,
+        message: "Both key and publicKey are required",
+      });
+    }
+
+    const existingData = cache.get(key);
+
+    if (!existingData) {
+      return makeErrorResponse({
+        res,
+        message: "Key not found",
+      });
+    }
+
+    cache.set(key, { ...existingData, publicKey }, { noUpdateTTL: true });
+
+    return makeSuccessResponse({
+      res,
+      message: "Public key updated successfully",
+    });
+  } catch (error) {
+    return makeErrorResponse({ res, message: error.message });
+  }
+};
+
+const getPublicKey = async (req, res) => {
+  try {
+    const key = req.params.key;
+
+    const data = cache.get(key);
+
+    if (!data || !data.publicKey) {
+      return makeErrorResponse({
+        res,
+        message: "Public key not found for the given key",
+      });
+    }
+
+    return makeSuccessResponse({
+      res,
+      message: "Get public key success",
+      data: { publicKey: data.publicKey },
+    });
+  } catch (error) {
+    return makeErrorResponse({ res, message: error.message });
+  }
+};
+
 export {
   putKey,
   getKey,
@@ -231,4 +285,6 @@ export {
   resetCache,
   getAllKeys,
   getMultiKeys,
+  putPublicKey,
+  getPublicKey,
 };

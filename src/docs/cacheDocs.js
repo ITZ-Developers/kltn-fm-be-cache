@@ -372,3 +372,119 @@
  *                   type: string
  *                   example: "Keys must be a non-empty array"
  */
+
+/**
+ * @swagger
+ * /v1/cache/put-public-key:
+ *   post:
+ *     summary: Add or update a public key for an existing key in the cache
+ *     tags: [Cache]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               key:
+ *                 type: string
+ *                 example: "emp:tenant1:user123"
+ *                 description: The key to update with a public key
+ *               publicKey:
+ *                 type: string
+ *                 example: "public_key_abc123"
+ *                 description: The public key to associate with the given key
+ *     responses:
+ *       200:
+ *         description: Public key updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Public key updated successfully"
+ *       400:
+ *         description: Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Both key and publicKey are required"
+ *       404:
+ *         description: Key not found in cache
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Key not found"
+ */
+
+/**
+ * @swagger
+ * /v1/cache/get-public-key/{key}:
+ *   get:
+ *     summary: Retrieve the public key associated with a specific key
+ *     tags: [Cache]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: key
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "emp:tenant1:user123"
+ *         description: The key to retrieve the public key for
+ *     responses:
+ *       200:
+ *         description: Public key retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Get public key success"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     publicKey:
+ *                       type: string
+ *                       example: "public_key_abc123"
+ *       404:
+ *         description: Public key or key not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Public key not found for the given key"
+ */
