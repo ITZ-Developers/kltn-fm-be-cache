@@ -31,6 +31,9 @@ const getKey = async (req, res) => {
   try {
     const key = req.params.key;
     const data = cache.get(key);
+    if (!data) {
+      return makeSuccessResponse({ res, message: "Key not found" });
+    }
     return makeSuccessResponse({
       res,
       message: "Get key success",
@@ -104,6 +107,7 @@ const getKeysByPattern = async (req, res) => {
     if (matchedKeys.length === 0) {
       return makeSuccessResponse({
         res,
+        data: [],
         message: "No matching keys found",
       });
     }
@@ -134,7 +138,11 @@ const removeKeysByPattern = async (req, res) => {
     }
 
     if (deletedKeys.length === 0) {
-      return makeSuccessResponse({ res, message: "No matching keys found" });
+      return makeSuccessResponse({
+        res,
+        data: [],
+        message: "No matching keys found",
+      });
     }
 
     return makeSuccessResponse({
@@ -261,6 +269,7 @@ const getPublicKey = async (req, res) => {
     if (!data || !data.publicKey) {
       return makeErrorResponse({
         res,
+        data: { publicKey: null },
         message: "Public key not found for the given key",
       });
     }
