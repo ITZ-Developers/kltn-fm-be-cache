@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
 import https from "https";
-import { APP_URL } from "../static/constant.js";
+import { ENV } from "../static/constant.js";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -11,9 +11,9 @@ dayjs.extend(timezone);
 const jobs = {
   activeService: new cron.CronJob("*/10 * * * *", async function () {
     https
-      .get(APP_URL, (res) => {
+      .get(ENV.APP_URL, (res) => {
         if (res.statusCode == 200) {
-          console.log(`[WARN] GET request sent successfully to ${APP_URL}`);
+          console.log(`[WARN] GET request sent successfully to ${ENV.APP_URL}`);
         } else {
           console.log("[WARN] GET request failed", res.statusCode);
         }

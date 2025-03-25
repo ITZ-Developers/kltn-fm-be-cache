@@ -1,6 +1,6 @@
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-import { SERVER_PORT } from "../static/constant.js";
+import { ENV } from "../static/constant.js";
 
 const swaggerOptions = {
   swaggerDefinition: {
@@ -20,7 +20,7 @@ const swaggerOptions = {
         description: "Remote server",
       },
       {
-        url: `http://localhost:${SERVER_PORT}`,
+        url: `http://localhost:${ENV.SERVER_PORT}`,
         description: "Local server",
       },
     ],
