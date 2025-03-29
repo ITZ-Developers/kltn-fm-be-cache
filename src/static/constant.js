@@ -6,6 +6,7 @@ const corsOptions = {
   origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization", "X-API-Key", "X-tenant"],
+  exposedHeaders: ["Content-Disposition"],
 };
 
 const ENV = {
@@ -19,4 +20,36 @@ const ENV = {
 const CACHE_TTL = 2592000000; // 30 days
 const CACHE_MAX_SIZE = 10000;
 
-export { corsOptions, DATE_FORMAT, ENV, CACHE_TTL, CACHE_MAX_SIZE };
+const MIME_TYPES = {
+  // Images
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".gif": "image/gif",
+  ".svg": "image/svg+xml",
+  ".webp": "image/webp",
+  ".bmp": "image/bmp",
+
+  // Videos
+  ".mp4": "video/mp4",
+  ".webm": "video/webm",
+  ".ogg": "video/ogg",
+  ".m3u8": "application/x-mpegURL",
+  ".ts": "video/mp2t",
+
+  // Soundtracks
+  ".mp3": "audio/mpeg",
+  ".wav": "audio/wav",
+  ".ogg": "audio/ogg",
+
+  // Documents
+  ".pdf": "application/pdf",
+  ".txt": "text/plain",
+  ".csv": "text/csv",
+  ".json": "application/json",
+  ".xml": "application/xml",
+  ".md": "text/markdown",
+  ".html": "text/html",
+};
+
+export { corsOptions, DATE_FORMAT, ENV, CACHE_TTL, CACHE_MAX_SIZE, MIME_TYPES };

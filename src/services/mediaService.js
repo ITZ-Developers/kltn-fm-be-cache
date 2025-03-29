@@ -1,4 +1,4 @@
-import { ENV } from "../static/constant.js";
+import { ENV, MIME_TYPES } from "../static/constant.js";
 import { decrypt, encrypt } from "../utils/utils.js";
 import { makeErrorResponse, makeSuccessResponse } from "./apiService.js";
 import fs from "fs";
@@ -43,6 +43,7 @@ const downloadFile = async (req, res) => {
   try {
     const folderName = req.params.folder;
     const fileName = req.params.fileName;
+
     if (!ENV.UPLOAD_DIR || !ENV.MEDIA_SECRET) {
       return makeErrorResponse({ res, message: "Server configuration error" });
     }
@@ -58,13 +59,7 @@ const downloadFile = async (req, res) => {
     const fileBuffer = Buffer.from(decryptedData, "base64");
 
     const ext = path.extname(fileName).toLowerCase();
-    let contentType = "application/octet-stream";
-    if (ext === ".jpg" || ext === ".jpeg") contentType = "image/jpeg";
-    else if (ext === ".png") contentType = "image/png";
-    else if (ext === ".gif") contentType = "image/gif";
-    else if (ext === ".mp4") contentType = "video/mp4";
-    else if (ext === ".m3u8") contentType = "application/x-mpegURL";
-    else if (ext === ".ts") contentType = "video/mp2t";
+    const contentType = MIME_TYPES[ext] || "application/octet-stream";
 
     res.setHeader("Content-Type", contentType);
     res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
