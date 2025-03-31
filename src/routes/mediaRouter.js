@@ -1,9 +1,15 @@
 import express from "express";
 import multer from "multer";
-import { downloadFile, uploadFile } from "../services/mediaService.js";
+import {
+  backupZipFile,
+  downloadAllFiles,
+  downloadFile,
+  uploadFile,
+} from "../services/mediaService.js";
 import { ENV } from "../static/constant.js";
 import fs from "fs";
 import path from "path";
+import auth from "../middlewares/authentication.js";
 
 const router = express.Router();
 
@@ -22,9 +28,31 @@ const storage = multer.diskStorage({
   },
 });
 
+const storageBackup = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const tempDir = path.join(ENV.UPLOAD_DIR, `temp_${Date.now()}`);
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true });
+    }
+    req.tempDir = tempDir;
+    cb(null, tempDir);
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
 const upload = multer({ storage });
+const uploadBackup = multer({ storage: storageBackup });
 
 router.post("/upload", upload.single("file"), uploadFile);
 router.get("/download/:folder/:fileName", downloadFile);
+router.get("/download-backup", auth(), downloadAllFiles);
+router.post(
+  "/push-backup",
+  auth(),
+  uploadBackup.single("zipFile"),
+  backupZipFile
+);
 
 export { router as mediaRouter };
