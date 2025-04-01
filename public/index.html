@@ -132,6 +132,18 @@
 
           <div class="flex items-center space-x-2">
             <button
+              id="downloadBackupBtn"
+              class="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-200 shadow-md"
+            >
+              <i class="fas fa-download mr-2"></i> Download Backup
+            </button>
+            <button
+              id="uploadBackupBtn"
+              class="flex items-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition duration-200 shadow-md"
+            >
+              <i class="fas fa-upload mr-2"></i> Upload Backup
+            </button>
+            <button
               id="resetCacheBtn"
               class="flex items-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-200 shadow-md"
             >
@@ -146,6 +158,9 @@
           </div>
         </div>
       </header>
+
+      <!-- Hidden file input for upload -->
+      <input type="file" id="backupFileInput" class="hidden" accept=".zip" />
 
       <!-- Stats Overview -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -335,6 +350,7 @@
     <div id="toastContainer" class="fixed bottom-4 right-4 z-50"></div>
 
     <script>
+      const MEDIA_BASE = "/v1/media";
       const API_BASE = "/v1/cache";
       const LOCAL_STORAGE_KEY = "cache_api_key";
       let allKeys = [];
@@ -374,6 +390,17 @@
         document
           .getElementById("copyKeyBtn")
           .addEventListener("click", copyKeyToClipboard);
+        document
+          .getElementById("downloadBackupBtn")
+          .addEventListener("click", downloadBackup);
+        document
+          .getElementById("uploadBackupBtn")
+          .addEventListener("click", () =>
+            document.getElementById("backupFileInput").click()
+          );
+        document
+          .getElementById("backupFileInput")
+          .addEventListener("change", uploadBackup);
       }
 
       function checkApiKey() {
@@ -803,6 +830,111 @@
           ellipsis +
           str.substring(str.length - backChars)
         );
+      }
+
+      async function downloadBackup() {
+        const apiKey = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (!apiKey) {
+          showToast("Please authenticate first", "error");
+          return;
+        }
+
+        try {
+          toggleLoadingState(true);
+          const response = await fetch(`${MEDIA_BASE}/download-backup`, {
+            headers: { "x-api-key": apiKey },
+          });
+
+          if (!response.ok) {
+            if (response.status === 401) {
+              throw new Error("Invalid API Key");
+            }
+            throw new Error("Failed to download backup");
+          }
+
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `backup-${Date.now()}.zip`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+
+          showToast("Backup downloaded successfully", "success");
+        } catch (error) {
+          console.error("Error downloading backup:", error);
+          if (error.message === "Invalid API Key") {
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+            showModal("apiKeyModal");
+            showToast("Invalid API Key, please re-authenticate", "error");
+          } else {
+            showToast("Failed to download backup", "error");
+          }
+        } finally {
+          toggleLoadingState(false);
+        }
+      }
+
+      async function uploadBackup(event) {
+        const apiKey = localStorage.getItem(LOCAL_STORAGE_KEY);
+        const file = event.target.files[0];
+
+        if (!apiKey) {
+          showToast("Please authenticate first", "error");
+          return;
+        }
+
+        if (!file) {
+          return;
+        }
+
+        if (!file.name.endsWith(".zip")) {
+          showToast("Please upload a ZIP file", "error");
+          event.target.value = "";
+          return;
+        }
+
+        try {
+          toggleLoadingState(true);
+          const formData = new FormData();
+          formData.append("zipFile", file);
+
+          const response = await fetch(`${MEDIA_BASE}/push-backup`, {
+            method: "POST",
+            headers: {
+              "x-api-key": apiKey,
+            },
+            body: formData,
+          });
+
+          if (!response.ok) {
+            if (response.status === 401) {
+              throw new Error("Invalid API Key");
+            }
+            throw new Error("Failed to upload backup");
+          }
+
+          const result = await response.json();
+          showToast(
+            result.message || "Backup uploaded successfully",
+            "success"
+          );
+          fetchKeys();
+        } catch (error) {
+          console.error("Error uploading backup:", error);
+          if (error.message === "Invalid API Key") {
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+            showModal("apiKeyModal");
+            showToast("Invalid API Key, please re-authenticate", "error");
+          } else {
+            showToast("Failed to upload backup", "error");
+          }
+        } finally {
+          toggleLoadingState(false);
+          event.target.value = "";
+        }
       }
     </script>
   </body>
