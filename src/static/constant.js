@@ -15,6 +15,8 @@ const ENV = {
   APP_URL: process.env.URL,
   MEDIA_SECRET: process.env.MEDIA_SECRET,
   UPLOAD_DIR: process.env.UPLOAD_DIR,
+  MONGODB_URI: process.env.MONGODB_URI,
+  DB_NAME: process.env.DB_NAME,
 };
 
 const CACHE_TTL = 2592000000; // 30 days
