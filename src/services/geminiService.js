@@ -18,6 +18,14 @@ const sendMessageGenAi = async (req, res) => {
     const chat = ai.chats.create({
       model: GEMINI_MODEL,
       history: history || [],
+      config: {
+        safetySettings: [
+          {
+            category: "HARM_CATEGORY_HARASSMENT",
+            threshold: "BLOCK_ONLY_HIGH",
+          },
+        ],
+      },
     });
 
     const response = await chat.sendMessage({ message });
