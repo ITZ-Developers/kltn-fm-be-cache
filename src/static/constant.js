@@ -4,7 +4,7 @@ const DATE_FORMAT = "DD/MM/YYYY HH:mm:ss";
 
 const corsOptions = {
   origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-API-Key", "X-tenant"],
   exposedHeaders: ["Content-Disposition"],
 };

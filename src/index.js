@@ -17,7 +17,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, { cors: corsOptions });
+const io = new Server(httpServer, {
+  cors: corsOptions,
+});
 
 app.use(cors(corsOptions));
 app.use(express.json({ limit: "1000mb" }));
@@ -40,3 +42,5 @@ httpServer.listen(PORT, () => {
 });
 dbConfig();
 setupSocket(io);
+
+export { io };

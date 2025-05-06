@@ -63,14 +63,14 @@ const setupSocket = (io) => {
       printLog("leaveRoom", clientId, room);
     });
   });
-};
 
-const printLog = (header, clientId, room) => {
-  if (!room) return;
-  const clientsInRoom = io.sockets.adapter.rooms.get(room)?.size || 0;
-  console.log(
-    `#ConnectedClients - ${header} => room: ${room}, count: ${clientsInRoom}`
-  );
+  const printLog = (header, clientId, room) => {
+    if (!room) return;
+    const clientsInRoom = io.sockets.adapter.rooms.get(room)?.size || 0;
+    console.log(
+      `#ConnectedClients - ${header} => room: ${room}, count: ${clientsInRoom}`
+    );
+  };
 };
 
 export { setupSocket };
