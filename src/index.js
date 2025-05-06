@@ -12,6 +12,7 @@ import { embeddingRouter } from "./routes/embeddingRouter.js";
 import dbConfig from "./config/dbConfig.js";
 import { Server } from "socket.io";
 import { setupSocket } from "./config/socketHandler.js";
+import { geminiRouter } from "./routes/geminiRouter.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,6 +29,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use("/v1/cache", cacheRouter);
 app.use("/v1/media", mediaRouter);
 app.use("/v1/embedding", embeddingRouter);
+app.use("/v1/gemini", geminiRouter);
 
 app.use(express.static(path.join(__dirname, "../public")));
 app.get("/", (req, res) => {

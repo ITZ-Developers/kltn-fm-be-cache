@@ -1,6 +1,7 @@
 import "dotenv/config.js";
 
 const DATE_FORMAT = "DD/MM/YYYY HH:mm:ss";
+const GEMINI_MODEL = "gemini-2.0-flash";
 
 const corsOptions = {
   origin: "*",
@@ -17,6 +18,7 @@ const ENV = {
   UPLOAD_DIR: process.env.UPLOAD_DIR,
   MONGODB_URI: process.env.MONGODB_URI,
   DB_NAME: process.env.DB_NAME,
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY,
 };
 
 const CACHE_TTL = 2592000000; // 30 days
@@ -54,4 +56,12 @@ const MIME_TYPES = {
   ".html": "text/html",
 };
 
-export { corsOptions, DATE_FORMAT, ENV, CACHE_TTL, CACHE_MAX_SIZE, MIME_TYPES };
+export {
+  corsOptions,
+  DATE_FORMAT,
+  ENV,
+  CACHE_TTL,
+  CACHE_MAX_SIZE,
+  MIME_TYPES,
+  GEMINI_MODEL,
+};
