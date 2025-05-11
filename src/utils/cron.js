@@ -9,7 +9,8 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const jobs = {
-  activeService: new cron.CronJob("*/10 * * * *", async function () {
+  // 1 minute
+  activeService: new cron.CronJob("* * * * *", async function () {
     https
       .get(ENV.APP_URL, (res) => {
         if (res.statusCode == 200) {
