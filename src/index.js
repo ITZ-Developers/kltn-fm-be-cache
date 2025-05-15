@@ -1,11 +1,11 @@
 import express from "express";
 import cors from "cors";
 import { swaggerDocs, swaggerUi } from "./config/swaggerConfig.js";
-import { corsOptions, ENV } from "./static/constant.js";
+import { corsOptions, ENV, RELOAD_INTERVAL } from "./static/constant.js";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
-import { startAllJobs } from "./utils/cron.js";
+import { reloadWebsite, startAllJobs } from "./utils/cron.js";
 import { cacheRouter } from "./routes/cacheRouter.js";
 import { mediaRouter } from "./routes/mediaRouter.js";
 import { embeddingRouter } from "./routes/embeddingRouter.js";
@@ -44,5 +44,6 @@ httpServer.listen(PORT, () => {
 });
 dbConfig();
 setupSocket(io);
+setInterval(reloadWebsite, RELOAD_INTERVAL);
 
 export { io };

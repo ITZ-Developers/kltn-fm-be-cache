@@ -23,6 +23,7 @@ const ENV = {
 
 const CACHE_TTL = 2592000000; // 30 days
 const CACHE_MAX_SIZE = 10000;
+const RELOAD_INTERVAL = 30000;
 
 const MIME_TYPES = {
   // Images
@@ -64,4 +65,5 @@ export {
   CACHE_MAX_SIZE,
   MIME_TYPES,
   GEMINI_MODEL,
+  RELOAD_INTERVAL,
 };

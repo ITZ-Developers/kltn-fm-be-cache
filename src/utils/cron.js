@@ -4,6 +4,7 @@ import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
 import https from "https";
 import { ENV } from "../static/constant.js";
+import axios from "axios";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -30,4 +31,22 @@ const startAllJobs = () => {
   console.log("All cron jobs have been started.");
 };
 
-export { jobs, startAllJobs };
+const reloadWebsite = () => {
+  axios
+    .get(ENV.APP_URL)
+    .then((response) => {
+      console.log(
+        `Reloaded at ${new Date().toISOString()}: Status Code ${
+          response.status
+        }`
+      );
+    })
+    .catch((error) => {
+      console.error(
+        `Error reloading at ${new Date().toISOString()}:`,
+        error.message
+      );
+    });
+};
+
+export { jobs, startAllJobs, reloadWebsite };
