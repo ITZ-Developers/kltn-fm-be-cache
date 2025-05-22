@@ -11,18 +11,20 @@ dayjs.extend(timezone);
 
 const jobs = {
   // 1 minute
-  activeService: new cron.CronJob("* * * * *", async function () {
-    https
-      .get(ENV.APP_URL, (res) => {
-        if (res.statusCode == 200) {
-          console.log(`[WARN] GET request sent successfully to ${ENV.APP_URL}`);
-        } else {
-          console.log("[WARN] GET request failed", res.statusCode);
-        }
-      })
-      .on("error", (e) => {
-        console.error("[ERROR] Error while sending request", e);
-      });
+  activeService: new cron.CronJob("* * * * *", async () => {
+    for (const url of ENV.APP_URLS) {
+      https
+        .get(url, (res) => {
+          if (res.statusCode == 200) {
+            console.log(`[WARN] GET request sent successfully to ${url}`);
+          } else {
+            console.log(`[WARN] GET request failed to ${url}`);
+          }
+        })
+        .on("error", (e) => {
+          console.error(`[ERROR] Error while sending request to ${url}`);
+        });
+    }
   }),
 };
 
@@ -32,21 +34,23 @@ const startAllJobs = () => {
 };
 
 const reloadWebsite = () => {
-  axios
-    .get(ENV.APP_URL)
-    .then((response) => {
-      console.log(
-        `Reloaded at ${new Date().toISOString()}: Status Code ${
-          response.status
-        }`
-      );
-    })
-    .catch((error) => {
-      console.error(
-        `Error reloading at ${new Date().toISOString()}:`,
-        error.message
-      );
-    });
+  for (const url of ENV.APP_URLS) {
+    axios
+      .get(url)
+      .then((response) => {
+        console.log(
+          `[${url}] Reloaded at ${new Date().toISOString()}: Status Code ${
+            response.status
+          }`
+        );
+      })
+      .catch((error) => {
+        console.error(
+          `[${url}] Error reloading at ${new Date().toISOString()}:`,
+          error.message
+        );
+      });
+  }
 };
 
 export { jobs, startAllJobs, reloadWebsite };

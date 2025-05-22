@@ -13,7 +13,7 @@ const corsOptions = {
 const ENV = {
   SERVER_PORT: process.env.PORT,
   X_API_KEY: process.env.X_API_KEY,
-  APP_URL: process.env.URL,
+  APP_URLS: process.env.URLS?.split(",").map((url) => url.trim()) || [],
   MEDIA_SECRET: process.env.MEDIA_SECRET,
   UPLOAD_DIR: process.env.UPLOAD_DIR,
   MONGODB_URI: process.env.MONGODB_URI,
