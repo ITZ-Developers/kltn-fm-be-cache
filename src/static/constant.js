@@ -19,11 +19,14 @@ const ENV = {
   MONGODB_URI: process.env.MONGODB_URI,
   DB_NAME: process.env.DB_NAME,
   GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+  SOCKET_MEDIA_URL: "https://finance-media.onrender.com",
+  WEBSOCKET_URL: "wss://finance-socket.onrender.com/ws",
 };
 
 const CACHE_TTL = 2592000000; // 30 days
 const CACHE_MAX_SIZE = 10000;
-const RELOAD_INTERVAL = 30000;
+const ACTIVE_SOCKET_INTERVAL = 30000;
+const RELOAD_INTERVAL = 50000;
 
 const MIME_TYPES = {
   // Images
@@ -66,4 +69,5 @@ export {
   MIME_TYPES,
   GEMINI_MODEL,
   RELOAD_INTERVAL,
+  ACTIVE_SOCKET_INTERVAL,
 };
