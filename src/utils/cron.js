@@ -14,12 +14,15 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const activeSocketMedia = () => {
-  if (mediaSocket && mediaSocket.connected) {
+  if (mediaSocket) {
     mediaSocket.disconnect();
+    mediaSocket = null;
   }
 
-  mediaSocket = io.connect(ENV.SOCKET_MEDIA_URL, {
+  mediaSocket = io(ENV.SOCKET_MEDIA_URL, {
     secure: true,
+    forceNew: true,
+    reconnection: false,
   });
 
   mediaSocket.on("connect", () => {
@@ -27,6 +30,7 @@ const activeSocketMedia = () => {
 
     setTimeout(() => {
       mediaSocket?.disconnect();
+      mediaSocket = null;
     }, ACTIVE_SOCKET_INTERVAL);
   });
 
